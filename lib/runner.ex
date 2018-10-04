@@ -1,8 +1,10 @@
 defmodule Netrunner.Runner do
-  defp install(state, card) do
-    # check requirements (credit, memory)
-    # trigger install event
-    # install
-    %{ runner: runner }
-  end
+  defstruct credits: 0,
+            clicks: 0,
+            resources: [],
+            programs: [],
+            hardware: [],
+            stack: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            heap: [],
+            grip: []
 end

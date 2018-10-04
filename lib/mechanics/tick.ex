@@ -1,6 +1,6 @@
-defmodule Netrunner.Mechanics.Tick do
+defmodule Netrunner.Mechanics.Click do
   def perform(player) do
-    %{ player | tick: player[:tick] - 1 }
+    %{ player | clicks: player[:clicks] - 1 }
   end
 
 end
