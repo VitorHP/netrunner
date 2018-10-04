@@ -5,6 +5,9 @@ defmodule Netrunner.Actions do
   alias Netrunner.Mechanics.Profit, as: Profit
   alias Netrunner.Mechanics.Draw, as: Draw
   alias Netrunner.Mechanics.Shuffle, as: Shuffle
+  alias Netrunner.Mechanics.Untag, as: Untag
+
+  defdelegate card(card_id), to: Netrunner.Card, as: :by_id
 
   def setup(state) do
     runner = state.runner
@@ -20,40 +23,45 @@ defmodule Netrunner.Actions do
     %{ state | runner: runner, corp: corp }
   end
 
-  def install(subject, state, card, location) do
-    with { :ok, player } <- Map.fetch(state, subject),
-         { :ok, clicked } <- Click.perform(player),
-         { :ok, paid } <- Pay.perform(clicked, card),
-         { :ok, installed } <- Install.perform(paid, card, location),
-         { :ok, true } <- Netrunner.Triggers.register(card),
-         { :ok, finished } <- Netrunner.Triggers.dispatch(:install, installed, card) do
-      { :ok, finished }
-    else
-      { :error, reasons } -> { :error, reasons }
-    end
+  def install(state, subject, card_id, location) do
+    player = state
+      |> Map.get(subject)
+      |> Click.perform
+      |> Pay.perform(card(card_id)["cost"])
+      |> Install.perform(card(card_id), location)
+      # |> Netrunner.Triggers.register(card),
+      # |> Netrunner.Triggers.dispatch(:install, installed, card) do
+
+    %{ state | subject => player }
   end
 
-  def profit(subject, state) do
-    with { :ok, player } <- Map.fetch(state, subject),
-         { :ok, clicked } <- Click.perform(player),
-         { :ok, profitted } <- Profit.perform(clicked, %{ profit: 1 }) do
-      { :ok, profitted }
-    else
-      { :error, reasons } -> { :error, reasons }
-    end
+  def profit(state, subject) do
+    player = state
+      |> Map.get(subject)
+      |> Click.perform
+      |> Profit.perform(1)
+
+    %{ state | subject => player }
   end
 
-  def draw(subject, state, deck) do
-    with { :ok, player } <- Map.fetch(state, subject),
-         { :ok, clicked } <- Click.perform(player),
-         { :ok, drawn } <- Draw.perform(clicked, deck, 1) do
-      { :ok, drawn }
-    else
-      { :error, reasons } -> { :error, reasons }
-    end
+  def draw(state, subject, deck, hand) do
+    player = state
+      |> Map.get(subject)
+      |> Click.perform
+      |> Draw.perform(:stack, :grip, 1)
+
+    %{ state | subject => player }
   end
 
-  def discard(subject, state) do
+  def untag(state) do
+    player = state
+      |> Map.get(:runner)
+      |> Click.perform
+      |> Pay.perform(2)
+      |> Untag.perform(1)
+
+    %{ state | runner: player }
   end
+
 end
 

@@ -8,4 +8,8 @@ defmodule Netrunner.Mechanics.ClickTest do
     assert runner[:clicks] == 0
   end
 
+  test "clicks when no click" do
+    assert Netrunner.Mechanics.Click.perform(%{ clicks: 0 }) == { :error, :no_clicks }
+  end
+
 end

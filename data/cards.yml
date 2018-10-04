@@ -1,0 +1,589 @@
+noise:
+  id: "noise"
+  link: 0
+  kind: 'identity'
+  subkind: 'g-mod'
+  install:
+    corp_trash:
+      target: 'installed'
+      kind: 'virus'
+      server: 'rnd'
+      trashed: 'top-card'
+
+yog_0:
+  id: "yog_0"
+  strength: 3
+  cost: 5
+  memory: 1
+  kind: 'program'
+  subkind:
+    - 'icebreaker'
+    - 'decoder'
+  activate:
+    - break:
+        kind: 'code-gate'
+        cost: 0
+
+wyrm:
+  id: "wyrm"
+  cost: 1
+  memory: 1
+  strength: 1
+  kind: 'program'
+  subkind:
+    - 'icebreaker'
+    - 'ai'
+  activate:
+    - break:
+      - and:
+        cost: 3
+        strength:
+          less: 1
+    - weaken_ice:
+      cost: 1
+      amount: 1
+    - strength_breaker:
+      cost: 1
+
+parasite:
+  id: "parasite"
+  cost: 2
+  memory: 2
+  host:
+    kind: 'ice'
+    rezzed: true
+  weaken_ice:
+    counter:
+      on: 'self'
+      kind: 'virus'
+  turn:
+    counter:
+      kind: 'virus'
+      on: 'self'
+      amount: 1
+    corp:
+      trash:
+        target: 'host'
+        strength:
+          less: 1
+
+corroder:
+  id: "corroder"
+  strength: 2
+  cost: 2
+  memory: 1
+  kind: 'program'
+  subkind:
+    - 'icebreaker'
+    - 'fracter'
+  activate:
+    - break:
+      cost: 1
+      kind: 'barrier'
+    - strength_breaker:
+      cost: 1
+      amount: 1
+
+djinn:
+  id: "djinn"
+  cost: 2
+  memory: 1
+  kind: 'program'
+  subkind: 'daemon'
+  tick:
+    search_deck:
+      cost: 1
+      amount: 1
+      subkind:
+        - 'virus'
+      shuffle_after: true
+      reveal: true
+  install:
+    host:
+      memory: 3
+      if:
+        and:
+          kind:
+            'program'
+          not:
+            subkind:
+              'icebreaker'
+
+medium:
+  id: "medium"
+  cost: 3
+  memory: 1
+  kind: 'program'
+  subkind:
+    - 'virus'
+  run_success:
+    target: 'rnd'
+    counter:
+      on: 'self'
+      kind: 'virus'
+  access:
+    target: 'rnd'
+    counter:
+      on: 'self'
+      amount:
+        more: 1
+    access_card:
+      amount: 1
+
+mimic:
+  id: "mimic"
+  cost: 3
+  memory: 1
+  kind: 'program'
+  subkind:
+    - 'icebreaker'
+    - 'killer'
+  strength: 3
+  activate:
+    - break:
+      cost: 1
+      kind: 'sentry'
+
+datasucker:
+  id: "datasucker"
+  cost: 1
+  memory: 1
+  kind: 'program'
+  subkind:
+    - 'virus'
+  run_success:
+    target: 'central'
+    counter:
+      on: 'self'
+      kind: 'virus'
+  spend:
+    weaken_ice:
+      amount: 1
+      duration: 'encounter'
+      target:
+        rezzed: true
+
+grimoire:
+  id: "grimoire"
+  cost: 3
+  kind: 'hardware'
+  subkind: 'console'
+  memory: 2
+  singleton: true
+  install:
+    kind: 'virus'
+    counter:
+      kind: 'virus'
+      on: 'installed'
+      amount: 1
+
+cyberfeeder:
+  id: "cyberfeeder"
+  cost: 2
+  kind: 'hardware'
+  subkind:
+    - 'chip'
+  turn:
+    credit:
+      on: 'self'
+      amount: 1
+  pay:
+    activate:
+      kind:
+        - 'icebreaker'
+    install:
+      kind:
+        - 'virus'
+
+demolition_run:
+  id: "demolition_run"
+  cost: 2
+  kind: 'event'
+  subkind:
+    - 'run'
+    - 'sabotage'
+  play:
+    run:
+      target:
+        or:
+          - 'rnd'
+          - 'hq'
+  access:
+    corp:
+      trash:
+        cost: 0
+        accessed:
+          kind: 'any'
+
+stimhack:
+  id: "stimhack"
+  cost: 0
+  kind: 'event'
+  subkind:
+    - 'run'
+  play:
+    run:
+      target: 'any'
+      credit:
+        on: 'player'
+        amount: 9
+        duration: 'run'
+  run_complete:
+    brain_damage: 1
+
+deja_vu:
+  id: "deja_vu"
+  cost: 2
+  kind: 'event'
+  play:
+    or:
+      search_card:
+        target: 'heap'
+        amount: 1
+      search_card:
+        target: 'heap'
+        amount: 2
+        subkind: 'virus'
+
+ice_carver:
+  id: "ice_carver"
+  cost: 3
+  kind: 'resource'
+  subkind: 'virtual'
+  encounter:
+    weaken_ice: 1
+
+wyldside:
+  id: "wyldside"
+  cost: 3
+  kind: 'resource'
+  subkind: 'location'
+  turn:
+    cost:
+      tick: 1
+    draw: 2
+
+# Generic
+
+sure_gamble:
+  id: "sure_gamble"
+  cost: 5
+  kind: 'event'
+  play:
+    - profit: 5
+
+infiltration:
+  id: "infiltration"
+  play:
+    or:
+      - credit: 2
+      - expose: 1
+
+crypsis:
+  id: "crypsis"
+  cost: 5
+  memory: 1
+  kind: 'program'
+  subkind:
+    - 'icebreaker'
+    - 'ai'
+    - 'virus'
+  activate:
+    - break:
+      kind: 'any'
+    - strength_breaker:
+      cost:
+        credit: 1
+      amount: 1
+  spend:
+    trash:
+      counter:
+        on: 'self'
+        kind: 'crypsis'
+        amount: 0
+  tick:
+    place_counter:
+      counter:
+        on: 'self'
+        kind: 'crypsis'
+        amount: 1
+
+access_to_globalsec:
+  id: "access_to_globalsec"
+  kind: 'resource'
+  subkind: 'link'
+  cost: 1
+  play:
+    link: 1
+
+armitage_codebusting:
+  id: "armitage_codebusting"
+  cost: 1
+  kind: 'resource'
+  subkind: 'job'
+  play:
+    credit:
+      on: 'self'
+      amount: 12
+  tick:
+    and:
+      - credit:
+        on: 'player'
+        amount: 2
+      - trash:
+        credit:
+          on: 'self'
+          amount: 0
+
+
+
+# corp cards
+
+
+jinteki_personal_evolution:
+  id: "jinteki_personal_evolution"
+  kind: 'identity'
+  subkind:
+    - 'megacorp'
+  score:
+    net_damage: 1
+  stolen:
+    net_damage: 1
+
+neural_emp:
+  id: "neural_emp"
+  play:
+    run:
+      turn: -1
+    net_damage: 1
+
+data_mine:
+  id: "data_mine"
+  kind: 'ice'
+  subkind:
+    - 'trap'
+    - 'ap'
+  strength: 2
+  cost: 0
+  subroutines:
+    - and:
+        net_damage: 1
+        trash:
+          target: 'self'
+
+chum:
+  id: "chum"
+  strength: 4
+  cost: 1
+  kind: 'ice'
+  subkind: 'code-gate'
+  subroutines:
+    - next_ice:
+      strength_ice: 2
+      net_damage:
+        amount: 3
+        break: false
+
+neural_katana:
+  id: "neural_katana"
+  cost: 4
+  strength: 3
+  kind: 'ice'
+  subkind:
+    - 'sentry'
+    - 'ap'
+  subroutines:
+    - net_damage: 3
+
+project_junebug:
+  id: "project_junebug"
+  cost: 0
+  trash: 0
+  kind: 'asset'
+  subkind:
+    - 'ambush'
+  advance: true
+  access:
+    cost: 1
+    net_damage:
+      amount:
+        counter:
+          kind: 'advancement'
+          multiplier: 2
+          on: 'self'
+
+snare:
+  id: "snare"
+  cost: 0
+  kind: 'asset'
+  trash: 0
+  subkind:
+    - 'ambush'
+  access:
+    or:
+      - server: 'archives'
+      - server: 'rnd'
+        cost: 4
+        and:
+          - net_damage:
+            amount: 3
+          - tag: 1
+
+nisei_mk_ii:
+  id: "nisei_mk_ii"
+  agenda: 2
+  advancement: 4
+  score:
+    counter:
+      amount: 1
+  spend:
+    end_run:
+      spend:
+        on: 'self'
+        kind: 'agenda'
+        amount: 1
+
+cell_portal:
+  id: "cell_portal"
+  cost: 5
+  strength: 7
+  kind: 'ice'
+  subkind:
+    - 'code-gate'
+    - 'deflector'
+  subroutines:
+    - and:
+      - teleport:
+        server: 'self'
+        index: 0
+      - rez: false
+
+precognition:
+  id: "precognition"
+  cost: 0
+  kind: 'operation'
+  lookup:
+    target: 'rnd'
+    rearrange: true
+    amount: 5
+
+zaibatsu_loyalty:
+  id: "zaibatsu_loyalty"
+  kind: 'asset'
+  cost: 0
+  trash: 4
+  expose:
+    rez: true
+  rez:
+    or:
+      - cost: 1
+      - trash:
+        target: 'self'
+    cancel_expose: true
+
+wall_of_thorns:
+  id: "wall_of_thorns"
+  cost: 8
+  strength: 5
+  kind: 'ice'
+  subkind: 'barrier'
+  subroutines:
+    - net_damage: 2
+    - end_run: true
+
+akitaro_watanabe:
+  id: "akitaro_watanabe"
+  cost: 1
+  kind: 'upgrade'
+  trash: 3
+  subkind:
+    - 'sysop'
+    - 'unorthodox'
+  pay:
+    kind: 'ice'
+    server: 'self'
+    discount: 2
+
+
+melange_mining_corps:
+  id: "melange_mining_corps"
+  cost: 1
+  kind: 'asset'
+  trash: 1
+  tick:
+    amount: 3
+    credit: 7
+
+hunter:
+  id: "hunter"
+  cost: 1
+  strength: 4
+  kind: 'ice'
+  subkind:
+    - 'sentry'
+    - 'observer'
+  subrountines:
+    - trace:
+      strength: 3
+  trace_success:
+    tag: 1
+
+priority_requisition:
+  id: "priority_requisition"
+  agenda: 3
+  advancement: 5
+  kind: 'agenda'
+  subkind: 'security'
+  score:
+    rez:
+      kind: 'ice'
+      server: 'any'
+
+enigma:
+  id: "enigma"
+  cost: 3
+  strength: 2
+  subroutines:
+    - tick:
+      amount: 1
+      optional: true
+    - end_run: true
+
+private_security_force:
+  id: "private_security_force"
+  advancement: 4
+  agenda: 2
+  kind: 'agenda'
+  subkind:
+    - 'security'
+  tick:
+    tag: true
+    meat_damage: 1
+
+hedge_fund:
+  id: "hedge_fund"
+  kind: 'operation'
+  subkind:
+    - 'transaction'
+  play:
+    credit: 9
+
+pad_campaign:
+  id: "pad_campaign"
+  kind: 'asset'
+  trash: 4
+  cost: 2
+  subkind:
+    - 'advertisement'
+  turn:
+    credit: 1
+
+wall_of_static:
+  id: "wall_of_static"
+  cost: 3
+  strength: 3
+  kind: 'ice'
+  subkind:
+    - 'barrier'
+  subroutines:
+    - end_run: true

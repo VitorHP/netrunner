@@ -1,6 +1,7 @@
 defmodule Netrunner.Runner do
-  defstruct credits: 0,
-            clicks: 0,
+  defstruct credits: 5,
+            clicks: 1,
+            tags: 2,
             resources: [],
             programs: [],
             hardware: [],
