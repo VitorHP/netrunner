@@ -16,78 +16,89 @@ defmodule Netrunner.Actions do
 
   def setup(state) do
     state
-    |> Map.put(:runner,
+    |> Map.put(
+      :runner,
       state.runner
-        |> Profit.perform(5)
-        |> Shuffle.perform(:stack)
-        |> Draw.perform(:stack, :grip, 5)
+      |> Profit.perform(5)
+      |> Shuffle.perform(:stack)
+      |> Draw.perform(:stack, :grip, 5)
     )
-    |> Map.put(:corp,
+    |> Map.put(
+      :corp,
       state.corp
-        |> Profit.perform(5)
-        |> Shuffle.perform(:rnd)
-        |> Draw.perform(:rnd, :hq, 5)
+      |> Profit.perform(5)
+      |> Shuffle.perform(:rnd)
+      |> Draw.perform(:rnd, :hq, 5)
     )
-    |> Issue.perform(:runner, [%{ target: :runner, mulligan: true}, %{ no_op: true }])
-    |> Issue.perform(:corp, [%{ target: :corp, mulligan: true}, %{ no_op: true }])
+    |> Issue.perform(:runner, [%{target: :runner, mulligan: true}, %{no_op: true}])
+    |> Issue.perform(:corp, [%{target: :corp, mulligan: true}, %{no_op: true}])
   end
 
   def install(state, :runner = target, card_id, location) do
-    player = state
+    player =
+      state
       |> Map.get(target)
-      |> Click.perform
+      |> Click.perform()
       |> Pay.perform(card(card_id).cost)
       |> Install.perform(card(card_id), location)
       |> Netrunner.Trigger.register(target, card(card_id))
-      # |> Netrunner.Triggers.dispatch(:install, installed, card) do
 
-    %{ state | target => player }
+    # |> Netrunner.Triggers.dispatch(:install, installed, card) do
+
+    %{state | target => player}
   end
 
   def profit(state, target) do
-    player = state
+    player =
+      state
       |> Map.get(target)
       |> Click.perform()
       |> Profit.perform(1)
 
-    %{ state | target => player }
+    %{state | target => player}
   end
 
   def draw(state, target, deck, hand) do
-    player = state
+    player =
+      state
       |> Map.get(target)
       |> Click.perform()
       |> Draw.perform(deck, hand, 1)
 
-    %{ state | target => player }
+    %{state | target => player}
   end
 
   def untag(state) do
-    player = state
+    player =
+      state
       |> Map.get(:runner)
       |> Click.perform()
       |> Pay.perform(2)
       |> Untag.perform(1)
 
-    %{ state | runner: player }
+    %{state | runner: player}
   end
 
   def play(state, target, card_id) do
     state
-      |> Map.get(target)
-      |> Click.perform()
-      |> Pay.perform(card(card_id).cost)
-      |> apply_effects(card(card_id))
-      |> Discard.perform(:grip, :heap, card_id)
+    |> Map.get(target)
+    |> Click.perform()
+    |> Pay.perform(card(card_id).cost)
+    |> apply_effects(card(card_id))
+    |> Discard.perform(:grip, :heap, card_id)
   end
 
   defp apply_effects(state, card) do
     card
-      |> Map.get(:play)
-      |> Map.take(effects())
-      |> Enum.reduce(state, fn { key, value }, acc ->
-        apply(String.to_existing_atom("Elixir.Netrunner.Mechanics." <> String.capitalize(key)), :perform, [acc, value])
-      end)
+    |> Map.get(:play)
+    |> Map.take(effects())
+    |> Enum.reduce(state, fn {key, value}, acc ->
+      apply(
+        String.to_existing_atom("Elixir.Netrunner.Mechanics." <> String.capitalize(key)),
+        :perform,
+        [acc, value]
+      )
+    end)
   end
 
   defp effects do

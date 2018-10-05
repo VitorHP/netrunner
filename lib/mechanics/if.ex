@@ -1,14 +1,15 @@
 defmodule Netrunner.Mechanics.If do
   def perform(target, nil) do
-    { :ok, true }
+    {:ok, true}
   end
 
   def perform(target, params) do
     case verify_params(target, params) do
       [] ->
-        { :ok, true }
+        {:ok, true}
+
       errors ->
-        { :error, errors }
+        {:error, errors}
     end
   end
 
@@ -16,12 +17,13 @@ defmodule Netrunner.Mechanics.If do
     Enum.reduce(
       params,
       [],
-      fn { key, value }, acc ->
+      fn {key, value}, acc ->
         Kernel.if Map.get(target, key) >= value do
           acc
         else
           [key | acc]
         end
-      end)
+      end
+    )
   end
 end

@@ -12,15 +12,15 @@ defmodule Netrunner.Game do
             triggers: %{}
 
   def build(runner_deck, corp_deck) do
-    %__MODULE__{ runner: %Runner{}, corp: %Corp{} }
+    %__MODULE__{runner: %Runner{}, corp: %Corp{}}
   end
 
-  def new_turn(%__MODULE__{ turns: [] } = game) do
-    %{ game | turns: [%Turn{ player: :corp }] }
+  def new_turn(%__MODULE__{turns: []} = game) do
+    %{game | turns: [%Turn{player: :corp}]}
   end
 
-  def new_turn(%__MODULE__{ turns: [last_turn | turns] } = game) do
-    %{ game | turns: [%Turn{ player: new_turn_player(last_turn) } | game.turns] }
+  def new_turn(%__MODULE__{turns: [last_turn | turns]} = game) do
+    %{game | turns: [%Turn{player: new_turn_player(last_turn)} | game.turns]}
   end
 
   defp new_turn_player(last_turn) do
