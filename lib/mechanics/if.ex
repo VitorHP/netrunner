@@ -17,7 +17,7 @@ defmodule Netrunner.Mechanics.If do
       params,
       [],
       fn { key, value }, acc ->
-        Kernel.if target[key] >= value do
+        Kernel.if Map.get(target, key) >= value do
           acc
         else
           [key | acc]

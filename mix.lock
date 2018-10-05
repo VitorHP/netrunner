@@ -1,4 +1,5 @@
 %{
+  "atomic_map": {:hex, :atomic_map, "0.9.3", "3c7f1302e0590164732d08ca999708efbb2cd768abf2911cf140280ce2dc499d", [:mix], []},
   "yamerl": {:hex, :yamerl, "0.7.0", "e51dba652dce74c20a88294130b48051ebbbb0be7d76f22de064f0f3ccf0aaf5", [:rebar3], []},
   "yaml_elixir": {:hex, :yaml_elixir, "1.4.0", "8c859bce9677793eb38efeac74edd0eddd892bc741c88b1e46bd22cdb1eb76fd", [:mix], [{:yamerl, "~> 0.5", [hex: :yamerl, optional: false]}]},
 }

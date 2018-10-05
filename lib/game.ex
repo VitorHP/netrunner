@@ -7,9 +7,11 @@ defmodule Netrunner.Game do
 
   defstruct runner: nil,
             corp: nil,
-            turns: []
+            issues: [],
+            turns: [],
+            triggers: %{}
 
-  def build() do
+  def build(runner_deck, corp_deck) do
     %__MODULE__{ runner: %Runner{}, corp: %Corp{} }
   end
 

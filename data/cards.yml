@@ -183,17 +183,8 @@ cyberfeeder:
   kind: 'hardware'
   subkind:
     - 'chip'
-  turn:
-    credit:
-      on: 'self'
-      amount: 1
-  pay:
-    activate:
-      kind:
-        - 'icebreaker'
-    install:
-      kind:
-        - 'virus'
+  start_turn:
+    - profit: 1
 
 demolition_run:
   id: "demolition_run"
@@ -258,10 +249,12 @@ wyldside:
   cost: 3
   kind: 'resource'
   subkind: 'location'
-  turn:
-    cost:
-      tick: 1
-    draw: 2
+  start_turn:
+    - tick: 1
+    - draw:
+        from: "stack"
+        to: "grip"
+        count: 2
 
 # Generic
 
@@ -270,14 +263,16 @@ sure_gamble:
   cost: 5
   kind: 'event'
   play:
-    - profit: 5
+    profit: 9
 
 infiltration:
   id: "infiltration"
   play:
-    or:
-      - credit: 2
+    issue:
+      - profit: 2
+        target: "runner"
       - expose: 1
+        target: "runner"
 
 crypsis:
   id: "crypsis"
@@ -290,11 +285,10 @@ crypsis:
     - 'virus'
   activate:
     - break:
-      kind: 'any'
-    - strength_breaker:
-      cost:
-        credit: 1
-      amount: 1
+        target:
+          kind: 'any'
+    - buff_breaker: 1
+      pay: 1
   spend:
     trash:
       counter:
@@ -476,7 +470,7 @@ zaibatsu_loyalty:
     rez: true
   rez:
     or:
-      - cost: 1
+      - pay: 1
       - trash:
         target: 'self'
     cancel_expose: true

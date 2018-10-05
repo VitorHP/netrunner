@@ -1,23 +1,23 @@
 defmodule Netrunner.Mechanics.Install do
   def perform(_, nil, _), do: { :error, :no_card }
 
-  def perform(player, %{ "kind" => "resource", "id" => id  } = _, _) do
+  def perform(player, %{ kind: "resource", id: id  } = _, _) do
     add_to_rig(player, :resources, id)
   end
 
-  def perform(player, %{ "kind" => "program", "id" => id  } = _, _) do
+  def perform(player, %{ kind: "program", id: id  } = _, _) do
     add_to_rig(player, :programs, id)
   end
 
-  def perform(player, %{ "kind" => "hardware", "id" => id } = _, _) do
+  def perform(player, %{ kind: "hardware", id: id } = _, _) do
     add_to_rig(player, :hardware, id)
   end
 
-  def perform(player, %{ "kind" => "ice", "id" => id } = card, location) do
+  def perform(player, %{ kind: "ice" } = card, location) do
     add_to_corp(player, :ice, card, location)
   end
 
-  def perform(player, %{ "kind" => kind, "id" => id } = card, location) when (kind == "agenda" or kind == "asset") and is_integer(location) do
+  def perform(player, %{ kind: kind } = card, location) when (kind == "agenda" or kind == "asset") and is_integer(location) do
     case Map.get(player.servers, location) do
       nil ->
         add_to_corp(player, :servers, card, location)
@@ -26,7 +26,7 @@ defmodule Netrunner.Mechanics.Install do
     end
   end
 
-  def perform(player, %{ "kind" => "upgrade", "id" => id } = card, location) do
+  def perform(player, %{ kind: "upgrade" } = card, location) do
     add_to_corp(player, :upgrades, card, location)
   end
 
@@ -40,9 +40,9 @@ defmodule Netrunner.Mechanics.Install do
           |> Map.get(section)
           |> Map.get(location) do
       nil ->
-        %{ location => [Map.get(card, "id")] }
+        %{ location => [card.id] }
       ice ->
-        %{ location => [Map.get(card, "id") | ice] }
+        %{ location => [card.id | ice] }
     end
 
     %{ corp | section => ice }
