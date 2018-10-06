@@ -9,7 +9,9 @@ defmodule Netrunner.Actions do
   alias Netrunner.Mechanics.Shuffle, as: Shuffle
   alias Netrunner.Mechanics.Untag, as: Untag
   alias Netrunner.Mechanics.Discard, as: Discard
-  alias Netrunner.Mechanics.Issue, as: Issue
+
+  alias Netrunner.Issue, as: Issue
+  alias Netrunner.Trigger, as: Trigger
 
   defdelegate card(card_id), to: Netrunner.Card, as: :by_id
 
@@ -100,10 +102,10 @@ defmodule Netrunner.Actions do
     case kind do
       :set_trigger ->
         triggers
-          |> Netrunner.Trigger.register(payload.event, payload.effect)
+          |> Trigger.register(payload.event, payload.effect)
       :install ->
         triggers
-          |> Netrunner.Trigger.register_card(payload.target, card(payload.card_id))
+          |> Trigger.register_card(payload.target, card(payload.card_id))
       _ ->
         triggers
     end

@@ -1,10 +1,10 @@
-defmodule Netrunner.Mechanics.IssueTest do
+defmodule Netrunner.IssueTest do
   use ExUnit.Case
-  doctest Netrunner.Mechanics.Draw
+  doctest Netrunner.Issue
 
   test "creates an issue" do
     issues =
-      Netrunner.Mechanics.Issue.perform([], :runner, [
+      Netrunner.Issue.perform([], :runner, [
         %{profit: 1},
         {:draw, :deck, :hand, 1}
       ])
