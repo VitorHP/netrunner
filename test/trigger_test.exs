@@ -4,7 +4,7 @@ defmodule Netrunner.TriggerTest do
 
   test "creates a trigger" do
     triggers =
-      Netrunner.Trigger.register(%{}, :runner, %{
+      Netrunner.Trigger.register_card(%{}, :runner, %{
         id: "cyberfeeder",
         start_turn: [%{profit: 1}]
       })

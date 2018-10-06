@@ -11,7 +11,7 @@ defmodule Netrunner.ActionsTest do
     end
 
     test "cards", context do
-      assert length(context.game.runner.grip) == 5
+      assert length(context.game.runner.hand) == 5
     end
 
     test "credits", context do
@@ -27,7 +27,7 @@ defmodule Netrunner.ActionsTest do
     setup do
       game = %{ Netrunner.Game.build |
         runner: %Netrunner.Runner{
-          grip: ["cyberfeeder"],
+          hand: ["cyberfeeder"],
           clicks: 1,
           credits: 2
         }
@@ -51,7 +51,5 @@ defmodule Netrunner.ActionsTest do
     test "registers triggers", context do
       assert length(context.game.triggers.start_turn) == 1
     end
-
-    # test "calls install trigger"
   end
 end

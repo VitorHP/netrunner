@@ -4,47 +4,35 @@ defmodule Netrunner.Mechanics.InstallTest do
 
   test "install a resource card" do
     runner =
-      Netrunner.Mechanics.Install.perform(
-        %Netrunner.Runner{},
-        %{kind: "resource", id: "test"},
-        :rig
-      )
+      Netrunner.Mechanics.Install.perform(%Netrunner.Runner{}, %{kind: "resource", id: "test"}, :rig)
 
     assert runner.resources == ["test"]
   end
 
   test "install a program card" do
     runner =
-      Netrunner.Mechanics.Install.perform(
-        %Netrunner.Runner{},
-        %{kind: "program", id: "test"},
-        :rig
-      )
+      Netrunner.Mechanics.Install.perform(%Netrunner.Runner{}, %{kind: "program", id: "test"}, :rig)
 
     assert runner.programs == ["test"]
   end
 
   test "install a hardware card" do
     runner =
-      Netrunner.Mechanics.Install.perform(
-        %Netrunner.Runner{},
-        %{kind: "hardware", id: "test"},
-        :rig
-      )
+      Netrunner.Mechanics.Install.perform(%Netrunner.Runner{}, %{kind: "hardware", id: "test"}, :rig)
 
     assert runner.hardware == ["test"]
   end
 
   test "install an ice card on HQ" do
-    corp = Netrunner.Mechanics.Install.perform(%Netrunner.Corp{}, %{kind: "ice", id: "chum"}, :hq)
-    assert corp.ice.hq == ["chum"]
+    corp = Netrunner.Mechanics.Install.perform(%Netrunner.Corp{}, %{kind: "ice", id: "chum"}, :hand)
+    assert corp.ice.hand == ["chum"]
   end
 
   test "install an ice card on R&D" do
     corp =
-      Netrunner.Mechanics.Install.perform(%Netrunner.Corp{}, %{kind: "ice", id: "chum"}, :rnd)
+      Netrunner.Mechanics.Install.perform(%Netrunner.Corp{}, %{kind: "ice", id: "chum"}, :deck)
 
-    assert corp.ice.rnd == ["chum"]
+    assert corp.ice.deck == ["chum"]
   end
 
   test "install an ice card on Archives" do

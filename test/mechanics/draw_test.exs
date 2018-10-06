@@ -5,38 +5,38 @@ defmodule Netrunner.Mechanics.DrawTest do
   test "draws a card" do
     runner =
       Netrunner.Mechanics.Draw.perform(
-        %Netrunner.Runner{grip: [], stack: [:card]},
-        :stack,
-        :grip,
+        %Netrunner.Runner{hand: [], deck: [:card]},
+        :deck,
+        :hand,
         1
       )
 
-    assert runner.grip == [:card]
-    assert runner.stack == []
+    assert runner.hand == [:card]
+    assert runner.deck == []
   end
 
   test "draws multiple cards" do
     runner =
       Netrunner.Mechanics.Draw.perform(
-        %Netrunner.Runner{grip: [], stack: [:card, :card, :card]},
-        :stack,
-        :grip,
+        %Netrunner.Runner{hand: [], deck: [:card, :card, :card]},
+        :deck,
+        :hand,
         3
       )
 
-    assert runner.grip == [:card, :card, :card]
-    assert runner.stack == []
+    assert runner.hand == [:card, :card, :card]
+    assert runner.deck == []
   end
 
   test "draws more cards than there are cards in the deck" do
     runner =
       Netrunner.Mechanics.Draw.perform(
-        %Netrunner.Runner{grip: [], stack: [:card, :card]},
-        :stack,
-        :grip,
+        %Netrunner.Runner{hand: [], deck: [:card, :card]},
+        :deck,
+        :hand,
         3
       )
 
-    assert runner.grip == [:card, :card]
+    assert runner.hand == [:card, :card]
   end
 end

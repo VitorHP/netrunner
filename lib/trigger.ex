@@ -1,5 +1,10 @@
 defmodule Netrunner.Trigger do
-  def register(triggers, target, card) do
+  def register(triggers, event, effect) do
+    triggers
+      |> Map.put(event, [effect | Map.get(triggers, event)])
+  end
+
+  def register_card(triggers, target, card) do
     Map.merge(triggers, build_triggers(target, card), fn _k, v1, v2 ->
       Enum.concat(v1, v2)
     end)

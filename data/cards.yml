@@ -4,11 +4,12 @@ noise:
   kind: 'identity'
   subkind: 'g-mod'
   install:
-    corp_trash:
-      target: 'installed'
-      kind: 'virus'
-      server: 'rnd'
-      trashed: 'top-card'
+    -
+      trash:
+        target: 'corp'
+        from: 'deck'
+        to: 'archives'
+        amount: 'top-card'
 
 yog_0:
   id: "yog_0"
@@ -117,12 +118,12 @@ medium:
   subkind:
     - 'virus'
   run_success:
-    target: 'rnd'
+    target: 'deck'
     counter:
       on: 'self'
       kind: 'virus'
   access:
-    target: 'rnd'
+    target: 'deck'
     counter:
       on: 'self'
       amount:
@@ -197,8 +198,8 @@ demolition_run:
     run:
       target:
         or:
-          - 'rnd'
-          - 'hq'
+          - 'deck'
+          - 'hand'
   access:
     corp:
       trash:
@@ -229,10 +230,10 @@ deja_vu:
   play:
     or:
       search_card:
-        target: 'heap'
+        target: 'discard'
         amount: 1
       search_card:
-        target: 'heap'
+        target: 'discard'
         amount: 2
         subkind: 'virus'
 
@@ -252,8 +253,8 @@ wyldside:
   start_turn:
     - tick: 1
     - draw:
-        from: "stack"
-        to: "grip"
+        from: "deck"
+        to: "hand"
         count: 2
 
 # Generic
@@ -415,8 +416,8 @@ snare:
     - 'ambush'
   access:
     or:
-      - server: 'archives'
-      - server: 'rnd'
+      - server: 'discard'
+      - server: 'deck'
         cost: 4
         and:
           - net_damage:
@@ -457,7 +458,7 @@ precognition:
   cost: 0
   kind: 'operation'
   lookup:
-    target: 'rnd'
+    target: 'deck'
     rearrange: true
     amount: 5
 

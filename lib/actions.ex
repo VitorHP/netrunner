@@ -34,40 +34,29 @@ defmodule Netrunner.Actions do
     }
   end
 
-  def runner(runner, { kind, %{ target: :runner } } = action) do
-    case kind do
-      :setup ->
-        runner
-          |> Profit.perform(5)
-          |> Shuffle.perform(:stack)
-          |> Draw.perform(:stack, :grip, 5)
-      _ ->
-        __MODULE__.player(runner, action)
-    end
+  def runner(runner, { _, %{ target: :runner } } = action) do
+    __MODULE__.player(runner, action)
   end
 
   def runner(runner, _) do
     runner
   end
 
-  def corp(corp, { kind, %{ target: :corp } } = action) do
-    case kind do
-      :setup ->
-        corp
-          |> Profit.perform(5)
-          |> Shuffle.perform(:rnd)
-          |> Draw.perform(:rnd, :hq, 5)
-      _ ->
-        __MODULE__.player(corp, action)
-    end
+  def corp(corp, { _, %{ target: :corp } } = action) do
+    __MODULE__.player(corp, action)
   end
 
   def corp(corp, _) do
     corp
   end
 
-  def player(player, { kind, payload } = action) do
+  def player(player, { kind, payload } = _) do
     case kind do
+      :setup ->
+        player
+          |> Profit.perform(5)
+          |> Shuffle.perform(:deck)
+          |> Draw.perform(:deck, :hand, 5)
       :install ->
         player
           |> Click.perform()
@@ -80,7 +69,7 @@ defmodule Netrunner.Actions do
       :draw ->
         player
           |> Click.perform()
-          |> Draw.perform(payload.deck, payload.hand, 1)
+          |> Draw.perform(:deck, :hand, 1)
       :untag ->
         player
           |> Click.perform()
@@ -110,9 +99,12 @@ defmodule Netrunner.Actions do
 
   def triggers(triggers, { kind, payload } = _) do
     case kind do
+      :setup ->
+        triggers
+          |> Netrunner.Trigger.register(:start_turn, %{target: "corp", draw: [:deck, :hand, 1]})
       :install ->
         triggers
-          |> Netrunner.Trigger.register(payload.target, card(payload.card_id))
+          |> Netrunner.Trigger.register_card(payload.target, card(payload.card_id))
       _ ->
         triggers
     end

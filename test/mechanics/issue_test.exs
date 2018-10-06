@@ -6,9 +6,9 @@ defmodule Netrunner.Mechanics.IssueTest do
     issues =
       Netrunner.Mechanics.Issue.perform([], :runner, [
         %{profit: 1},
-        {:draw, :stack, :grip, 1}
+        {:draw, :deck, :hand, 1}
       ])
 
-    assert issues == [%{target: :runner, options: [%{profit: 1}, {:draw, :stack, :grip, 1}]}]
+    assert issues == [%{target: :runner, options: [%{profit: 1}, {:draw, :deck, :hand, 1}]}]
   end
 end

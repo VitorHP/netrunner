@@ -10,14 +10,14 @@ defmodule Netrunner.Game do
 
   def build do
     %__MODULE__{
-      runner: %Runner{stack: [
+      runner: %Runner{deck: [
         "yog_0",
         "wyrm",
         "sure_gamble",
         "parasite",
         "datasucker",
       ]},
-      corp: %Corp{rnd: [
+      corp: %Corp{deck: [
         "pad_campaign",
         "wall_of_static",
         "hedge_fund",
