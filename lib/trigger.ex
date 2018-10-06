@@ -1,7 +1,7 @@
 defmodule Netrunner.Trigger do
   def register(triggers, event, effect) do
     triggers
-      |> Map.put(event, [effect | Map.get(triggers, event)])
+      |> Map.put(event, [effect | Map.get(triggers, event) || []])
   end
 
   def register_card(triggers, target, card) do

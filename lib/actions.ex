@@ -80,18 +80,17 @@ defmodule Netrunner.Actions do
           |> Click.perform()
           |> Pay.perform(card(payload.card_id).cost)
           |> apply_effects(card(payload.card_id))
-          |> Discard.perform(:grip, :heap, payload.card_id)
+          |> Discard.perform(:hand, :discard, payload.card_id)
       _ ->
         player
     end
   end
 
-  def issues(issues, { kind, _ } = _) do
+  def issues(issues, { kind, %{ target: target } } = action) do
     case kind do
       :setup ->
         issues
-          |> Issue.perform(:runner, [%{target: :runner, mulligan: true}, %{no_op: true}])
-          |> Issue.perform(:corp, [%{target: :corp, mulligan: true}, %{no_op: true}])
+          |> Issue.perform(target, [%{target: target, mulligan: true}, %{no_op: true}])
       _ ->
         issues
     end
@@ -99,9 +98,9 @@ defmodule Netrunner.Actions do
 
   def triggers(triggers, { kind, payload } = _) do
     case kind do
-      :setup ->
+      :set_trigger ->
         triggers
-          |> Netrunner.Trigger.register(:start_turn, %{target: "corp", draw: [:deck, :hand, 1]})
+          |> Netrunner.Trigger.register(payload.event, payload.effect)
       :install ->
         triggers
           |> Netrunner.Trigger.register_card(payload.target, card(payload.card_id))

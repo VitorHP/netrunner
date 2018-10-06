@@ -27,12 +27,10 @@ defmodule Netrunner.Game do
     }
   end
 
-  def dispatch(state, { action, args } = params) do
-    apply(Netrunner.Actions, action, [state | args])
-  end
-
-  def sc do
+  def setup do
     __MODULE__.build
-    |> __MODULE__.dispatch({ :setup, [] })
+      |> Netrunner.Actions.dispatch({ :setup, %{ target: :runner } })
+      |> Netrunner.Actions.dispatch({ :setup, %{ target: :corp } })
+      |> Netrunner.Actions.dispatch({ :set_trigger, %{ target: :corp, event: :start_turn, effect: %{target: :corp, draw: [:deck, :hand, 1]}}})
   end
 end

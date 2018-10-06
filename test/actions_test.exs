@@ -19,7 +19,7 @@ defmodule Netrunner.ActionsTest do
     end
 
     test "mulligans", context do
-      assert length(context.game.issues) == 2
+      assert length(context.game.issues) == 1
     end
   end
 
