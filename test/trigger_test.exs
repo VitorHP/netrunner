@@ -3,12 +3,12 @@ defmodule Netrunner.TriggerTest do
   doctest Netrunner.Trigger
 
   test "creates a trigger" do
-    game =
-      Netrunner.Trigger.register(%Netrunner.Game{}, :runner, %{
+    triggers =
+      Netrunner.Trigger.register(%{}, :runner, %{
         id: "cyberfeeder",
         start_turn: [%{profit: 1}]
       })
 
-    assert game.triggers == %{start_turn: [%{target: :runner, origin: "cyberfeeder", profit: 1}]}
+    assert triggers == %{start_turn: [%{target: :runner, origin: "cyberfeeder", profit: 1}]}
   end
 end

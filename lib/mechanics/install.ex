@@ -17,12 +17,10 @@ defmodule Netrunner.Mechanics.Install do
     add_to_corp(player, :ice, card, location)
   end
 
-  def perform(player, %{kind: kind} = card, location)
-      when (kind == "agenda" or kind == "asset") and is_integer(location) do
+  def perform(player, %{kind: kind} = card, location) when (kind == "agenda" or kind == "asset") and is_integer(location) do
     case Map.get(player.servers, location) do
       nil ->
         add_to_corp(player, :servers, card, location)
-
       _ ->
         {:error, :server_full}
     end

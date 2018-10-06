@@ -1,9 +1,6 @@
 defmodule Netrunner.Game do
   alias Netrunner.Runner, as: Runner
   alias Netrunner.Corp, as: Corp
-  alias Netrunner.Turn, as: Turn
-
-  @players [:runner, :corp]
 
   defstruct runner: nil,
             corp: nil,
@@ -11,19 +8,31 @@ defmodule Netrunner.Game do
             turns: [],
             triggers: %{}
 
-  def build(runner_deck, corp_deck) do
-    %__MODULE__{runner: %Runner{}, corp: %Corp{}}
+  def build do
+    %__MODULE__{
+      runner: %Runner{stack: [
+        "yog_0",
+        "wyrm",
+        "sure_gamble",
+        "parasite",
+        "datasucker",
+      ]},
+      corp: %Corp{rnd: [
+        "pad_campaign",
+        "wall_of_static",
+        "hedge_fund",
+        "private_security_force",
+        "enigma"
+      ]}
+    }
   end
 
-  def new_turn(%__MODULE__{turns: []} = game) do
-    %{game | turns: [%Turn{player: :corp}]}
+  def dispatch(state, { action, args } = params) do
+    apply(Netrunner.Actions, action, [state | args])
   end
 
-  def new_turn(%__MODULE__{turns: [last_turn | turns]} = game) do
-    %{game | turns: [%Turn{player: new_turn_player(last_turn)} | game.turns]}
-  end
-
-  defp new_turn_player(last_turn) do
-    Enum.find(@players, fn x -> x !== last_turn.player end)
+  def sc do
+    __MODULE__.build
+    |> __MODULE__.dispatch({ :setup, [] })
   end
 end

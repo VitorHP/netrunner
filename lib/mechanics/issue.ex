@@ -1,5 +1,5 @@
 defmodule Netrunner.Mechanics.Issue do
-  def perform(state, target, options) do
-    %{state | issues: [%{target: target, options: options} | state.issues]}
+  def perform(issues, target, options) do
+    [%{target: target, options: options} | issues]
   end
 end

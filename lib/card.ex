@@ -4,6 +4,4 @@ defmodule Netrunner.Card do
   def by_id(id) when is_atom(id), do: by_id(Atom.to_string(id))
 
   def by_id(id), do: @cards |> Map.get(id) |> AtomicMap.convert(%{safe: false})
-
-  def cards, do: @cards
 end

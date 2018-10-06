@@ -1,6 +1,5 @@
 defmodule Netrunner.Actions do
-  alias Netrunner.Runner, as: Runner
-  alias Netrunner.Corp, as: Corp
+  @players [:runner, :corp]
 
   alias Netrunner.Mechanics.Click, as: Click
   alias Netrunner.Mechanics.Pay, as: Pay
@@ -14,91 +13,122 @@ defmodule Netrunner.Actions do
 
   defdelegate card(card_id), to: Netrunner.Card, as: :by_id
 
-  def setup(state) do
-    state
-    |> Map.put(
-      :runner,
-      state.runner
-      |> Profit.perform(5)
-      |> Shuffle.perform(:stack)
-      |> Draw.perform(:stack, :grip, 5)
-    )
-    |> Map.put(
-      :corp,
-      state.corp
-      |> Profit.perform(5)
-      |> Shuffle.perform(:rnd)
-      |> Draw.perform(:rnd, :hq, 5)
-    )
-    |> Issue.perform(:runner, [%{target: :runner, mulligan: true}, %{no_op: true}])
-    |> Issue.perform(:corp, [%{target: :corp, mulligan: true}, %{no_op: true}])
+  # def new_turn(%__MODULE__{turns: []} = game) do
+  #   %{game | turns: [%Turn{player: :corp}]}
+  # end
+
+  # def new_turn(%__MODULE__{turns: [last_turn | turns]} = game) do
+  #   %{game | turns: [%Turn{player: new_turn_player(last_turn)} | game.turns]}
+  # end
+
+  # defp new_turn_player(last_turn) do
+  #   Enum.find(@players, fn x -> x !== last_turn.player end)
+  # end
+
+  def dispatch(state, action) do
+    %{
+      runner: __MODULE__.runner(state.runner, action),
+      corp: __MODULE__.corp(state.corp, action),
+      issues: __MODULE__.issues(state.issues, action),
+      triggers: __MODULE__.triggers(state.triggers, action)
+    }
   end
 
-  def install(state, :runner = target, card_id, location) do
-    player =
-      state
-      |> Map.get(target)
-      |> Click.perform()
-      |> Pay.perform(card(card_id).cost)
-      |> Install.perform(card(card_id), location)
-      |> Netrunner.Trigger.register(target, card(card_id))
-
-    # |> Netrunner.Triggers.dispatch(:install, installed, card) do
-
-    %{state | target => player}
+  def runner(runner, { kind, %{ target: :runner } } = action) do
+    case kind do
+      :setup ->
+        runner
+          |> Profit.perform(5)
+          |> Shuffle.perform(:stack)
+          |> Draw.perform(:stack, :grip, 5)
+      _ ->
+        __MODULE__.player(runner, action)
+    end
   end
 
-  def profit(state, target) do
-    player =
-      state
-      |> Map.get(target)
-      |> Click.perform()
-      |> Profit.perform(1)
-
-    %{state | target => player}
+  def runner(runner, _) do
+    runner
   end
 
-  def draw(state, target, deck, hand) do
-    player =
-      state
-      |> Map.get(target)
-      |> Click.perform()
-      |> Draw.perform(deck, hand, 1)
-
-    %{state | target => player}
+  def corp(corp, { kind, %{ target: :corp } } = action) do
+    case kind do
+      :setup ->
+        corp
+          |> Profit.perform(5)
+          |> Shuffle.perform(:rnd)
+          |> Draw.perform(:rnd, :hq, 5)
+      _ ->
+        __MODULE__.player(corp, action)
+    end
   end
 
-  def untag(state) do
-    player =
-      state
-      |> Map.get(:runner)
-      |> Click.perform()
-      |> Pay.perform(2)
-      |> Untag.perform(1)
-
-    %{state | runner: player}
+  def corp(corp, _) do
+    corp
   end
 
-  def play(state, target, card_id) do
-    state
-    |> Map.get(target)
-    |> Click.perform()
-    |> Pay.perform(card(card_id).cost)
-    |> apply_effects(card(card_id))
-    |> Discard.perform(:grip, :heap, card_id)
+  def player(player, { kind, payload } = action) do
+    case kind do
+      :install ->
+        player
+          |> Click.perform()
+          |> Pay.perform(card(payload.card_id).cost)
+          |> Install.perform(card(payload.card_id), payload.location)
+      :profit ->
+        player
+          |> Click.perform()
+          |> Profit.perform(1)
+      :draw ->
+        player
+          |> Click.perform()
+          |> Draw.perform(payload.deck, payload.hand, 1)
+      :untag ->
+        player
+          |> Click.perform()
+          |> Pay.perform(2)
+          |> Untag.perform(1)
+      :play ->
+        player
+          |> Click.perform()
+          |> Pay.perform(card(payload.card_id).cost)
+          |> apply_effects(card(payload.card_id))
+          |> Discard.perform(:grip, :heap, payload.card_id)
+      _ ->
+        player
+    end
   end
 
-  defp apply_effects(state, card) do
+  def issues(issues, { kind, _ } = _) do
+    case kind do
+      :setup ->
+        issues
+          |> Issue.perform(:runner, [%{target: :runner, mulligan: true}, %{no_op: true}])
+          |> Issue.perform(:corp, [%{target: :corp, mulligan: true}, %{no_op: true}])
+      _ ->
+        issues
+    end
+  end
+
+  def triggers(triggers, { kind, payload } = _) do
+    case kind do
+      :install ->
+        triggers
+          |> Netrunner.Trigger.register(payload.target, card(payload.card_id))
+      _ ->
+        triggers
+    end
+  end
+
+  defp apply_effects(player, card) do
     card
-    |> Map.get(:play)
-    |> Map.take(effects())
-    |> Enum.reduce(state, fn {key, value}, acc ->
-      apply(
-        String.to_existing_atom("Elixir.Netrunner.Mechanics." <> String.capitalize(key)),
-        :perform,
-        [acc, value]
-      )
-    end)
+      |> Map.get(:play)
+      |> Map.take(effects())
+      |> Enum.reduce(player, fn {key, value}, acc ->
+        apply(
+          String.to_existing_atom("Elixir.Netrunner.Mechanics." <> String.capitalize(key)),
+          :perform,
+          [acc, value]
+        )
+      end)
   end
 
   defp effects do
