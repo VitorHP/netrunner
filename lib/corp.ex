@@ -7,5 +7,6 @@ defmodule Netrunner.Corp do
             hand: [],
             ice: %{},
             servers: %{},
-            upgrades: %{}
+            upgrades: %{},
+            identity: nil
 end

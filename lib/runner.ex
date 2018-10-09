@@ -8,5 +8,6 @@ defmodule Netrunner.Runner do
             hardware: [],
             deck: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
             discard: [],
-            hand: []
+            hand: [],
+            identity: nil
 end
